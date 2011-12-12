@@ -9,5 +9,4 @@ TODO
 * rewrite clipper
 * progress bars
 * package for distribution
-* clean up imports
 

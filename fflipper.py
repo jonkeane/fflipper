@@ -1,14 +1,11 @@
-import sys, re, os, subprocess
-from datetime import datetime
-from datetime import timedelta
-import time
-import elementtree
-from elementtree import ElementTree as ET
+import sys, re, os, subprocess, time
+from datetime import datetime #both datetime imports needed?
+from datetime import timedelta #both datetime imports needed?
+from elementtree import ElementTree
 from pipes import quote
 from Tkinter import *
 #from ttk import *
 import tkFileDialog
-#import TScrolledFrame as TSF
 
 
 #-------------------------------------------------------------------------------
@@ -60,7 +57,7 @@ class tierSet:
     def extractTiers(self, file):
         """A function that extracts the tiers from a file and creates a tierSet that includes everything in the file."""
         verbose = False
-        tree = ET.parse(file)
+        tree = ElementTree.parse(file)
         root = tree.getroot()
         rootLen = len(root)    
         pairs = [(X.attrib['TIME_SLOT_ID'],X.attrib['TIME_VALUE']) for X in root[1]]
@@ -104,27 +101,12 @@ class tierSet:
         return tierSet(file=None, media=media, tiers=tiers, pathELAN=pathELAN)
 
 
-#-------------------------------------------------------------------------------
-# Clipping function
-#-------------------------------------------------------------------------------
-
-def clipper(infile, outfile, tstart, tend, options, log, verbose=True):
-    ''' clipps video with options '''
-    #deinterlace+crop+scale '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [o2]; [o2] scale=852:480 [out]"'
-    #deinterlace+crop '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [out]"'
-    #deinterlace '-vf "[in] yadif=1 [out]"'
-    dur = tend-tstart
-    cmd = ''.join(['ffmpeg -i ',infile,' -ss ',str(tstart),' -t ',str(dur),' ',options,' -sameq -y ',outfile])
-    if verbose: print cmd
-    logFile = open(log, 'w')
-    p = subprocess.Popen(cmd, shell=True, stdout=logFile, stderr=logFile)
-    return p
 
 #-------------------------------------------------------------------------------
 # Number Appender
 #-------------------------------------------------------------------------------
 
-def f5(seq, idfun=None):  
+def numAppend(seq, idfun=None):  
     # order preserving 
     if idfun is None: 
         def idfun(x): return x 
@@ -140,6 +122,25 @@ def f5(seq, idfun=None):
         seen[marker] = 1 
         result.append(item) 
     return result
+
+
+
+
+#-------------------------------------------------------------------------------
+# Clipping function
+#-------------------------------------------------------------------------------
+
+def clipper(infile, outfile, tstart, tend, options, log, verbose=True):
+    ''' clipps video with options '''
+    #deinterlace+crop+scale '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [o2]; [o2] scale=852:480 [out]"'
+    #deinterlace+crop '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [out]"'
+    #deinterlace '-vf "[in] yadif=1 [out]"'
+    dur = tend-tstart
+    cmd = ''.join(['ffmpeg -i ',infile,' -ss ',str(tstart),' -t ',str(dur),' ',options,' -sameq -y ',outfile])
+    if verbose: print cmd
+    logFile = open(log, 'w')
+    p = subprocess.Popen(cmd, shell=True, stdout=logFile, stderr=logFile)
+    return p
 
 
 #-------------------------------------------------------------------------------
