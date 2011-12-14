@@ -1,11 +1,10 @@
-import sys, re, os, subprocess, time
-from datetime import datetime #both datetime imports needed?
-from datetime import timedelta #both datetime imports needed?
+import sys, re, os, time, subprocess
 from elementtree import ElementTree
-from pipes import quote
 from Tkinter import *
-#from ttk import *
+## from ttk import *
 import tkFileDialog
+import tkMessageBox
+import clipper
 
 
 #-------------------------------------------------------------------------------
@@ -94,10 +93,7 @@ class tierSet:
         for tr in tiers:
             if tr.tierName in tierNames:
                 newTiers.append(tr)
-        if newTiers != []:
-            tiers = newTiers
-        else:
-            print("Error, no tiers selected, I guess I need to clip all. Oops!")
+        tiers = newTiers
         return tierSet(file=None, media=media, tiers=tiers, pathELAN=pathELAN)
 
 
@@ -125,58 +121,6 @@ def numAppend(seq, idfun=None):
 
 
 
-
-#-------------------------------------------------------------------------------
-# Clipping function
-#-------------------------------------------------------------------------------
-
-def clipper(infile, outfile, tstart, tend, options, log, verbose=True):
-    ''' clipps video with options '''
-    #deinterlace+crop+scale '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [o2]; [o2] scale=852:480 [out]"'
-    #deinterlace+crop '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [out]"'
-    #deinterlace '-vf "[in] yadif=1 [out]"'
-    dur = tend-tstart
-    cmd = ''.join(['ffmpeg -i ',infile,' -ss ',str(tstart),' -t ',str(dur),' ',options,' -sameq -y ',outfile])
-    if verbose: print cmd
-    logFile = open(log, 'w')
-    p = subprocess.Popen(cmd, shell=True, stdout=logFile, stderr=logFile)
-    return p
-
-
-#-------------------------------------------------------------------------------
-# Main clipping function
-#-------------------------------------------------------------------------------
-
-def mainClipper():
-    file = tkFileDialog.askopenfilename()
-    annos,path = extractClipTier(file)
-    n = 0
-    procs = []
-    for timep in annos:
-        tstart = float(timep[0])/1000. # convert milliseconds to seconds
-        tend = float(timep[1])/1000. # convert milliseconds to seconds
-        name = timep[2]
-        flag = ""
-        outName = path.split("/")[-1]
-        outName = outName.split(".")[0]
-        outfile = quote(''.join(['/'.join(path.split("/")[0:-1]),"/",flag,outName,"-",name,"-clip",str(n),".mp4"]))
-        # allow non logging
-        logfile = quote(''.join([flag,outName,"-",name,"-clip",str(n),".log"]))
-        infile = quote(path)
-        print outfile
-        ## procs.append(subprocess.Popen("echo $PATH", shell=True))
-        procs.append(clipper(infile=infile, outfile=outfile, tstart=tstart, tend=tend, options='', log=logfile, verbose=True))
-        n += 1
-
-    print "Waiting for the process to finish."
-    procs[0].wait()
-    print(procs[0].poll())
-    print "Finished!"
-    return
-
-
-
-
 class AutoScrollbar(Scrollbar):
     # a scrollbar that hides itself if it's not needed.  only
     # works if you use the grid geometry manager.
@@ -200,6 +144,7 @@ class fflipper:
         self.allTiers = [] # storage for the tiers of an ELAN file
         self.savePath = os.curdir # storage for the save path
         self.checkBoxen = [] # storage for the tier checkboxes
+        self.subProcs = [] # for subprocess of clipping
 
         # Generate the self.master window.
         master.title("fflipper")
@@ -277,6 +222,7 @@ class fflipper:
         aTier = Checkbutton(optionsArea, text="append tier name to annotation", variable=self.appendTier, command=self.samplePathUpdate)
         aTier.grid(row = 0, sticky=W)
 
+        # Doesn't work because it doesn't make the directory, need to fix that immediately before clipping, or does ffmpeg have a make dir option?
         self.folderTier = BooleanVar()
         self.folderTier.set(False)
         fTier = Checkbutton(optionsArea, text="each tier in a separate folder", variable=self.folderTier, command=self.samplePathUpdate)
@@ -302,10 +248,10 @@ class fflipper:
         self.saveTo.grid(row=6, column=0, sticky=W )
 
         # clipping button
-        self.clip = Button(master, text="Begin clipping", command=self.samplePathUpdate)
+        self.clip = Button(master, text="Begin clipping", command=self.clipPrep)
         self.clip.grid(row=3, column=0, sticky=W )
 
-        # locations string. doesn't work.
+        # locations string. Mostly works, doesn't update on import of clips (feature, not a bug?)
         self.pathSample = StringVar()
         self.pathSamp = Label(master, textvariable=self.pathSample, wraplength=680, fg="dark gray")
         self.pathSamp.grid(row=3, column = 1, columnspan=3, sticky=E)
@@ -335,21 +281,66 @@ class fflipper:
         return path
  
     def samplePathGen(self):
-        filename = self.prependName.get()
-        basePath = self.savePath
+        relTiers = self.relativizeTiers()
+        # Check if there are any relative tiers.
+        if relTiers.tiers != []:
+            path = self.pathGen(tier=relTiers.tiers[0].tierName, annoVal=relTiers.tiers[0].annotations[0].value)
+        else:
+            path = ''
+        return path
+
+    def relativizeTiers(self):
         newTierNames=[]
         for checkBox in self.checkBoxen:
             if checkBox[1].get():
                 newTierNames.append(checkBox[0])
         relTiers = tierSet.selectedTiers(self.allTiers,newTierNames)
-        path = self.pathGen(tier=relTiers.tiers[0].tierName, annoVal=relTiers.tiers[0].annotations[0].value)
-        return path
+        return relTiers
 
     def sPath(self):
         path = tkFileDialog.askdirectory()
         if path: #check that there is a new path.
             self.savePath = path
         self.samplePathUpdate()
+
+    def clipPrep(self):
+        relTiers = self.relativizeTiers()
+        if relTiers.tiers == []:
+            #error if there are no tiers selected.
+            tkMessageBox.showwarning(
+            "No tiers selected",
+            "There are no tiers selected.")
+        
+        inFile = relTiers.media
+        for tr in relTiers.tiers:
+            trName = tr.tierName
+            for anno in tr.annotations:
+                outFile = self.pathGen( tier=trName, annoVal=anno.value)
+                annos = (anno.begin, anno.end)
+                self.subProcs.append(clipper.clipper(annos=annos,outPath=outFile, inFile=inFile))
+        # monitor process
+        if self.subProcs != []:
+            numProcs = len(self.subProcs)
+            nComplete = 0
+            while nComplete < numProcs:
+                for singleProc in self.subProcs:
+                    if singleProc.subProc.returncode is None:
+                        frameReg = re.compile("^frame=\s+(\d+).*")
+
+                        outPut = singleProc.subProc.stdout.readline()
+                        frames = frameReg.match(outPut)
+                        if frames:
+                            print "frames:", frames.group(1)
+
+                        singleProc.subProc.poll()
+                    else:
+                        print "done!"
+                        nComplete +=1
+            print nComplete,"/",numProcs
+
+        return self.subProcs
+                
+        
 
     def selectTiers(self,tierSelection, canvasTier):
         file_opt = options =  {}
