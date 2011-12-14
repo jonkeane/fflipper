@@ -53,6 +53,21 @@ class tierSet:
         self.tiers = tiers
         self.pathELAN = pathELAN
 
+        ### If media exists, try in the same folder as the elan file.:
+        if os.path.isfile(media) == False:
+            sameDirPath = os.path.join(pathELAN,os.path.basename(media))
+            if os.path.isfile(sameDirPath) == False:
+                #error if there are no tiers selected.
+                tkMessageBox.showwarning(
+                    "No media found",
+                    "Could not find the media attached to the ELAN file. Please open the ELAN file, find the media, and then save it again.")
+                self.media = []
+                self.tiers = tier
+                self.pathELAN = []
+                
+            else:    
+                self.media = sameDirPath
+
     def extractTiers(self, file):
         """A function that extracts the tiers from a file and creates a tierSet that includes everything in the file."""
         verbose = False
@@ -93,7 +108,7 @@ class tierSet:
         for tr in tiers:
             if tr.tierName in tierNames:
                 newTiers.append(tr)
-        tiers = newTiers
+        tiers = newTiers    
         return tierSet(file=None, media=media, tiers=tiers, pathELAN=pathELAN)
 
 
@@ -273,7 +288,7 @@ class fflipper:
             filename = filename+tier
         filename +=  annoVal
 
-        # do not add extraneous separators.
+        # do not add extraneous separators. change to os.sep.join()? probably not.
         if basePath[-1] == os.sep:
             path = ''.join([basePath,filename])
         else:
@@ -294,7 +309,13 @@ class fflipper:
         for checkBox in self.checkBoxen:
             if checkBox[1].get():
                 newTierNames.append(checkBox[0])
-        relTiers = tierSet.selectedTiers(self.allTiers,newTierNames)
+        try:
+            relTiers = tierSet.selectedTiers(self.allTiers,newTierNames)
+        except TypeError:
+            #error if there are no tiers selected.
+            tkMessageBox.showwarning(
+                "No tiers detected",
+                "There are no tiers to work with. Please select a (new) ELAN file.")       
         return relTiers
 
     def sPath(self):
@@ -334,6 +355,9 @@ class fflipper:
 
                         singleProc.subProc.poll()
                     else:
+                        if singleProc.subProc.returncode:
+                            print "Error!"
+                            print singleProc.subProc.stdout.read()
                         print "done!"
                         nComplete +=1
             print nComplete,"/",numProcs
@@ -352,7 +376,7 @@ class fflipper:
         ## frame = Frame(top)
         ## frame.pack()
         
-        self.msg = Label(tierSelection, text="Which tiers would you like to clip?", wraplength=160, anchor=W, justify=LEFT)
+        self.msg = Label(tierSelection, text="Which tiers would you like to clip?", wraplength=2000, anchor=W, justify=LEFT)
         self.msg.grid(row=0, sticky=N+W)
         self.msg.bind("<MouseWheel>", lambda event:  self.canvasTier.yview("scroll", event.delta,"units"))
         
