@@ -25,10 +25,11 @@ class clipper:
         #deinterlace+crop '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [out]"'
         #deinterlace '-vf "[in] yadif=1 [out]"'
         dur = tend-tstart
+        cmd = ["../Resources/ffmpeg"]
         cmd = ["ffmpeg"]
         opts = ["-i", infile, "-ss", str(tstart), "-t", str(dur),"-sameq", "-y", outfile]
         cmd.extend(opts)
-        if verbose: print cmd
+        if verbose: print(cmd)
         if log: logFile = open(log, 'w')
         p = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout = subprocess.PIPE, bufsize=1, universal_newlines=True)
         return p

@@ -4,7 +4,7 @@ from Tkinter import *
 import tkFileDialog
 import tkMessageBox
 import clipper
-import pyelan
+import pyelan.pyelan as pyelan
 
 
 
@@ -287,7 +287,13 @@ class fflipper:
         file_opt = options =  {}
         options['filetypes'] = [('eaf files', '.eaf'), ('all files', '.*')]
         file = tkFileDialog.askopenfilename(**options)
-        self.allTiers = pyelan.tierSet(file=file)
+        try:
+            self.allTiers = pyelan.tierSet(file=file)
+        except pyelan.noMediaError, e:
+            #error if there are no tiers selected.
+            tkMessageBox.showwarning(
+                "No media found",
+                "Could not find the media attached to the ELAN file (path:"+e.filename+"). Please open the ELAN file, find the media, and then save it again.")
         ## top = Toplevel()
         ## top.title("Tier selection")
         ## frame = Frame(top)
