@@ -3,7 +3,7 @@ from Tkinter import *
 ## from ttk import *
 import tkFileDialog
 import tkMessageBox
-import clipper
+import clipper.clipper as clipper
 import pyelan.pyelan as pyelan
 
 
