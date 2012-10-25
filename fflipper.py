@@ -119,16 +119,17 @@ class fflipper:
         separator.grid(row=1,column=2, rowspan=2)
 
         # generate the progress area.
-        progressArea = LabelFrame(master, width=500, height=600, text='Progress')
+        progressArea = LabelFrame(master, width=500, height=800, text='Progress')
         progressArea.grid(row=1, column=3, rowspan=2, sticky=W)
         progressArea.grid_propagate(0)
 
 
         # generate the options area.
-        optionsArea = LabelFrame(master, width=300, height=200, text='Options')
+        optionsArea = LabelFrame(master, width=300, height=400, text='Options')
         optionsArea.grid(row=2, column=0, columnspan=2, sticky=W)
         optionsArea.grid_propagate(0)
 
+        # append tier name to annotation
         self.appendTier = BooleanVar()
         self.appendTier.set(True)
         aTier = Checkbutton(optionsArea, text="append tier name to annotation", variable=self.appendTier, command=self.samplePathUpdate)
@@ -139,25 +140,51 @@ class fflipper:
         self.folderTier.set(False)
         fTier = Checkbutton(optionsArea, text="each tier in a separate folder", variable=self.folderTier, command=self.samplePathUpdate)
         fTier.grid(row = 1, sticky=W)
+        
+        # no audio?
+        self.audio = BooleanVar()
+        self.audio.set(False)
+        udio = Checkbutton(optionsArea, text="audio", variable=self.audio)
+        udio.grid(row = 2, sticky=W)
+        
+        # video codec
+        separator.grid(row=3)
 
-        separato = Frame(optionsArea,height=15,width=10)
-        separato.grid(row=2)
+        self.videoCodec = StringVar()
+        self.videoCodec.set('mpeg4')
+        cLabel = Label(optionsArea, text="video codec:")
+        cLabel.grid(row=4, sticky=W)
+        vCodec = Entry(optionsArea, textvariable=self.videoCodec, width=35)
+        vCodec.grid(row = 5, sticky=E)
+        vCodec.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
+
+        # video filters
+        separator.grid(row=6)
+
+        self.videoFilters = StringVar()
+        self.videoFilters.set("[in] yadif=1 [out]")
+        vfLabel = Label(optionsArea, text="video filters:")
+        vfLabel.grid(row=7, sticky=W)
+        vFilters = Entry(optionsArea, textvariable=self.videoFilters, width=35)
+        vFilters.grid(row = 8, sticky=E)
+        vFilters.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
+
+        # prepend to each file option
+        separator.grid(row=9)
 
         self.prependName = StringVar()
         self.prependName.set('')
         pLabel = Label(optionsArea, text="prepend to every clip:")
-        pLabel.grid(row=3, sticky=W)
+        pLabel.grid(row=10, sticky=W)
         pName = Entry(optionsArea, textvariable=self.prependName, width=35)
-        pName.grid(row = 4, sticky=E)
+        pName.grid(row = 11, sticky=E)
         pName.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
         
-
-        separat = Frame(optionsArea,height=15,width=10)
-        separat.grid(row=5)
-
         # save to button
+        separator.grid(row=12)
+
         self.saveTo = Button(optionsArea, text="Save to...", command=self.sPath)
-        self.saveTo.grid(row=6, column=0, sticky=W )
+        self.saveTo.grid(row=13, column=0, sticky=W )
 
         # clipping button
         self.clip = Button(master, text="Begin clipping", command=self.clipPrep)
@@ -230,6 +257,9 @@ class fflipper:
             "There are no tiers selected.")
         
         inFile = relTiers.media
+        audio = self.audio.get()
+        videoFilters = self.videoFilters.get()
+        videoCodec = self.videoCodec.get()
         for tr in relTiers.tiers:
             trName = tr.tierName
             numCores = 16
@@ -239,7 +269,7 @@ class fflipper:
             for anno in tr.annotations:
                 outFile = self.pathGen( tier=trName, annoVal=anno.value)
                 annos = (anno.begin, anno.end)
-                self.subProcs.append(clipper.clipper(annos=annos, outPath=outFile, inFile=inFile))
+                self.subProcs.append(clipper.clipper(annos=annos, outPath=outFile, inFile=inFile, audio=audio, videoFilters=videoFilters, videoCodec=videoCodec))
                 numAnnosLeft = numAnnosLeft - 1
                 print("numannosleft",numAnnosLeft)
                 freeProcs = freeProcs-1
