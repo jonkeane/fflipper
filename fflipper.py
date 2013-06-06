@@ -14,6 +14,7 @@ import pyelan.pyelan as pyelan
 # Number Appender
 #-------------------------------------------------------------------------------
 
+# this is not used, and does not work.
 def numAppend(seq, idfun=None):  
     # order preserving 
     if idfun is None: 
@@ -76,7 +77,7 @@ class fflipper:
 
 
         # generate the tiers frame
-        self.tierSelection = LabelFrame(master, width=300, height=400, text='Tiers')
+        self.tierSelection = LabelFrame(master, width=300, height=200, text='Tiers')
         self.tierSelection.grid(row=1, column=0, columnspan=2, sticky=W)
         self.tierSelection.grid_propagate(0)
 
@@ -119,7 +120,7 @@ class fflipper:
         separator.grid(row=1,column=2, rowspan=2)
 
         # generate the progress area.
-        progressArea = LabelFrame(master, width=500, height=800, text='Progress')
+        progressArea = LabelFrame(master, width=500, height=600, text='Progress')
         progressArea.grid(row=1, column=3, rowspan=2, sticky=W)
         progressArea.grid_propagate(0)
 
@@ -151,7 +152,7 @@ class fflipper:
         separator.grid(row=3)
 
         self.videoCodec = StringVar()
-        self.videoCodec.set('mpeg4')
+        self.videoCodec.set('h264')
         cLabel = Label(optionsArea, text="video codec:")
         cLabel.grid(row=4, sticky=W)
         vCodec = Entry(optionsArea, textvariable=self.videoCodec, width=35)
@@ -162,29 +163,52 @@ class fflipper:
         separator.grid(row=6)
 
         self.videoFilters = StringVar()
-        self.videoFilters.set("[in] yadif=1 [out]")
+        self.videoFilters.set("") # [in] yadif=1 [out] for deinterlacing
         vfLabel = Label(optionsArea, text="video filters:")
         vfLabel.grid(row=7, sticky=W)
         vFilters = Entry(optionsArea, textvariable=self.videoFilters, width=35)
         vFilters.grid(row = 8, sticky=E)
         vFilters.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
 
-        # prepend to each file option
+        # video quality options
         separator.grid(row=9)
+
+        self.videoQuality = StringVar()
+        self.videoQuality.set("0")
+        vfLabel = Label(optionsArea, text="video quality:")
+        vfLabel.grid(row=10, sticky=W)
+        vQuality = Entry(optionsArea, textvariable=self.videoQuality, width=35)
+        vQuality.grid(row =11, sticky=E)
+        vQuality.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
+
+        # other options
+        separator.grid(row=12)
+
+        self.otherOptions = StringVar()
+        self.otherOptions.set("")
+        vfLabel = Label(optionsArea, text="other options:")
+        vfLabel.grid(row=13, sticky=W)
+        oOptions = Entry(optionsArea, textvariable=self.otherOptions, width=35)
+        oOptions.grid(row =14, sticky=E)
+        oOptions.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
+
+        
+        # prepend to each file option
+        separator.grid(row=15)
 
         self.prependName = StringVar()
         self.prependName.set('')
         pLabel = Label(optionsArea, text="prepend to every clip:")
-        pLabel.grid(row=10, sticky=W)
+        pLabel.grid(row=16, sticky=W)
         pName = Entry(optionsArea, textvariable=self.prependName, width=35)
-        pName.grid(row = 11, sticky=E)
+        pName.grid(row = 17, sticky=E)
         pName.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
         
         # save to button
-        separator.grid(row=12)
+        separator.grid(row=18)
 
         self.saveTo = Button(optionsArea, text="Save to...", command=self.sPath)
-        self.saveTo.grid(row=13, column=0, sticky=W )
+        self.saveTo.grid(row=19, column=0, sticky=W )
 
         # clipping button
         self.clip = Button(master, text="Begin clipping", command=self.clipPrep)
@@ -259,17 +283,19 @@ class fflipper:
         inFile = relTiers.media
         audio = self.audio.get()
         videoFilters = self.videoFilters.get()
+        videoQuality = self.videoQuality.get()
         videoCodec = self.videoCodec.get()
+        otherOptions = self.otherOptions.get()
         for tr in relTiers.tiers:
             trName = tr.tierName
-            numCores = 16
+            numCores = 4
             freeProcs = numCores
             numAnnosLeft = len (tr.annotations)
             print("numannosleft",numAnnosLeft)
             for anno in tr.annotations:
                 outFile = self.pathGen( tier=trName, annoVal=anno.value)
                 annos = (anno.begin, anno.end)
-                self.subProcs.append(clipper.clipper(annos=annos, outPath=outFile, inFile=inFile, audio=audio, videoFilters=videoFilters, videoCodec=videoCodec))
+                self.subProcs.append(clipper.clipper(annos=annos, outPath=outFile, inFile=inFile, audio=audio, videoFilters=videoFilters, videoCodec=videoCodec, videoQuality=videoQuality,otherOptions=otherOptions))
                 numAnnosLeft = numAnnosLeft - 1
                 print("numannosleft",numAnnosLeft)
                 freeProcs = freeProcs-1
