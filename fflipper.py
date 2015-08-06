@@ -15,21 +15,21 @@ import pyelan.pyelan as pyelan
 #-------------------------------------------------------------------------------
 
 # this is not used, and does not work.
-def numAppend(seq, idfun=None):  
-    # order preserving 
-    if idfun is None: 
-        def idfun(x): return x 
-    seen = {} 
-    result = [] 
-    for item in seq: 
-        marker = idfun(item) 
-        # in old Python versions: 
-        # if seen.has_key(marker) 
-        # but in new ones: 
+def numAppend(seq, idfun=None):
+    # order preserving
+    if idfun is None:
+        def idfun(x): return x
+    seen = {}
+    result = []
+    for item in seq:
+        marker = idfun(item)
+        # in old Python versions:
+        # if seen.has_key(marker)
+        # but in new ones:
         if marker in seen:
-            item = ''.join([marker,"1"]) 
-        seen[marker] = 1 
-        result.append(item) 
+            item = ''.join([marker,"1"])
+        seen[marker] = 1
+        result.append(item)
     return result
 
 
@@ -92,14 +92,14 @@ class fflipper:
                         yscrollcommand=vscrollbar.set,
                         xscrollcommand=hscrollbar.set)
         self.canvasTier.grid(row=0, column=0, sticky=N+S+E+W)
-    
+
         vscrollbar.config(command=self.canvasTier.yview)
         hscrollbar.config(command=self.canvasTier.xview)
-        
+
         # make the canvas expandable
         self.tierSelection.grid_rowconfigure(0, weight=1)
         self.tierSelection.grid_columnconfigure(0, weight=1)
-    
+
         # create a frame within the canvas
         self.tierSelectionTB = Frame(self.canvasTier)
         self.tierSelectionTB.rowconfigure(1, weight=1)
@@ -108,7 +108,7 @@ class fflipper:
         self.canvasTier.bind("<MouseWheel>", lambda event:  self.canvasTier.yview("scroll", event.delta,"units"))
         self.tierSelectionTB.bind("<MouseWheel>", lambda event:  self.canvasTier.yview("scroll", event.delta,"units"))
 
-        
+
         # ties the frame to the canvas ("the canvas acts like a geometry manager")
         self.canvasTier.create_window(0, 0, anchor=NW, window=self.tierSelectionTB)
         # Can probably be deleted, because they are dealt with in the tiers function
@@ -141,13 +141,13 @@ class fflipper:
         self.folderTier.set(False)
         fTier = Checkbutton(optionsArea, text="each tier in a separate folder", variable=self.folderTier, command=self.samplePathUpdate)
         fTier.grid(row = 1, sticky=W)
-        
+
         # no audio?
         self.audio = BooleanVar()
         self.audio.set(False)
         udio = Checkbutton(optionsArea, text="audio", variable=self.audio)
         udio.grid(row = 2, sticky=W)
-        
+
         # video codec
         separator.grid(row=3)
 
@@ -192,7 +192,7 @@ class fflipper:
         oOptions.grid(row =14, sticky=E)
         oOptions.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
 
-        
+
         # prepend to each file option
         separator.grid(row=15)
 
@@ -203,7 +203,7 @@ class fflipper:
         pName = Entry(optionsArea, textvariable=self.prependName, width=35)
         pName.grid(row = 17, sticky=E)
         pName.bind("<KeyRelease>", lambda event: self.samplePathUpdate())
-        
+
         # save to button
         separator.grid(row=18)
 
@@ -218,7 +218,7 @@ class fflipper:
         self.pathSample = StringVar()
         self.pathSamp = Label(master, textvariable=self.pathSample, wraplength=680, fg="dark gray")
         self.pathSamp.grid(row=3, column = 1, columnspan=3, sticky=E)
-        
+
 
     def samplePathUpdate(self):
         path = self.samplePathGen()
@@ -231,7 +231,7 @@ class fflipper:
             if basePath[-1] == os.sep:
                 basePath = ''.join([basePath,tier])
             else:
-                basePath = os.sep.join([basePath,tier])                
+                basePath = os.sep.join([basePath,tier])
         if self.appendTier.get():
             filename = filename+tier
         filename +=  annoVal
@@ -242,7 +242,7 @@ class fflipper:
         else:
             path = os.sep.join([basePath,filename])
         return path
- 
+
     def samplePathGen(self):
         relTiers = self.relativizeTiers()
         # Check if there are any relative tiers.
@@ -263,7 +263,7 @@ class fflipper:
             #error if there are no tiers selected.
             tkMessageBox.showwarning(
                 "No tiers detected",
-                "There are no tiers to work with. Please select a (new) ELAN file.")       
+                "There are no tiers to work with. Please select a (new) ELAN file.")
         return relTiers
 
     def sPath(self):
@@ -279,8 +279,9 @@ class fflipper:
             tkMessageBox.showwarning(
             "No tiers selected",
             "There are no tiers selected.")
-        
-        inFile = relTiers.media
+
+        # grab the first media file only. This might not be the right medial file if there is more than one.
+        inFile = relTiers.media[0]
         audio = self.audio.get()
         videoFilters = self.videoFilters.get()
         videoQuality = self.videoQuality.get()
@@ -301,7 +302,7 @@ class fflipper:
                 freeProcs = freeProcs-1
                 if numAnnosLeft == 0:
                     freeProcs = 0
-                    print("Last Process!")              
+                    print("Last Process!")
                 while freeProcs == 0:
                     # monitor process
                     print("Starting process monitoring.")
@@ -336,8 +337,8 @@ class fflipper:
                     print("Reseting to the next batch of processes.")
                     freeProcs = numCores
         return self.subProcs
-                
-        
+
+
 
     def selectTiers(self,tierSelection, canvasTier):
         file_opt = options =  {}
@@ -354,11 +355,11 @@ class fflipper:
         ## top.title("Tier selection")
         ## frame = Frame(top)
         ## frame.pack()
-        
+
         self.msg = Label(tierSelection, text="Which tiers would you like to clip?", wraplength=2000, anchor=W, justify=LEFT)
         self.msg.grid(row=0, sticky=N+W)
         self.msg.bind("<MouseWheel>", lambda event:  self.canvasTier.yview("scroll", event.delta,"units"))
-        
+
         self.checkBoxen = []
         r = 1
         for tier in self.allTiers.tiers:
@@ -373,19 +374,18 @@ class fflipper:
             r += 1
         #Change the save to path to the path of the ELAN file.
         self.savePath = self.allTiers.pathELAN
-        
+
         # to alter the scroll size of the canvas.
         tierSelection.update_idletasks()
         canvasTier.config(scrollregion=canvasTier.bbox(ALL))
 
 
-            
+
 
 
 if __name__ == '__main__':
     root = Tk()
-    
-    app = fflipper(root)
-    
-    root.mainloop()
 
+    app = fflipper(root)
+
+    root.mainloop()
