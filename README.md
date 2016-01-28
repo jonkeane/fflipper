@@ -14,6 +14,9 @@ To install on OS X (tested and works with Yosemite:)
 
 If this doesn't work, consult the Homebrew documentation.
 
+### Install python and tk from brew
+`brew install python --with-tcl-tk`
+
 ### Install ElementTree for python:
 `easy_install elementtree` should work, if not try `sudo easy_install elementtree`
 
