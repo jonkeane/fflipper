@@ -26,6 +26,8 @@ Move these into the fflipper folder, and make sure that each folder is named jus
 ### Run
 Use the command `python /path/to/fflipper/fflipper.py` in the terminal to run ffliper, remember to change the /path/to part to the location of fflipper on your machine.
 
+Some development of this project was supported by a grant from the national sicence foundation: NFS BCS 1251807
+
 
 
 TODO
