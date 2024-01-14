@@ -6,10 +6,13 @@ authors = ["Jonathan Keane <jkeane@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.13"
 pytest = "^7.4.3"
 pyelan = "^0.1.0"
+pyinstaller = "^6.3.0"
 
+[tool.poetry.scripts]
+build = "fflipper.pyinstaller:install"
 
 [build-system]
 requires = ["poetry-core"]
