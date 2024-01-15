@@ -1,0 +1,9 @@
+fflipper version 0.1.0
+
+Licensed under the LGPL 3.0
+
+Repository: http://github.com/jonkeane/fflipper
+
+Includes and uses a binary version of FFmpeg. FFmpeg is licensed under the (L)GPL. 
+
+The source is available at http://github.com/jonkeane/fflipper and https://github.com/FFmpeg/FFmpeg/tree/release/6.1

@@ -1,0 +1,23 @@
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['macos-latest']
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.12
+
+    - run: pip install -r poetry
+    - run: poetry install
+    - run: poetry run build
+    - uses: actions/upload-artifact@v2
+      with:
+        path: dist/fflipper.app

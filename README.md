@@ -1,14 +1,14 @@
 fflipper
 ================================
 
-A video clipper that takes ELAN files as it's input, and generates clips based on the annotations in a selected tier.
+A video clipper that takes ELAN files as it's input and generates clips based on the annotations in a selected tier.
 
 
 ## Installation
 
 To install on OS X (tested and works with Yosemite:)
 
-### Install [Homebrew](http://brew.sh/) with the command 
+### Install [Homebrew](http://brew.sh/) with the command
 
 `ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 
@@ -29,11 +29,10 @@ Use the command `python /path/to/fflipper/fflipper.py` in the terminal to run ff
 Some development of this project was supported by a grant from the national sicence foundation: NFS BCS 1251807
 
 
+## Development
 
-TODO
--------------------------
-* subprocess polling
-* rewrite clipper
-* progress bars
-* package for distribution
+The project makes use of poetry and pyinstaller to manage dependencies + bundle everything needed together.
 
+To create a release:
+
+Which will run `poetry run build` which calls pyinstaller.py
