@@ -13,7 +13,7 @@ if (sys == "darwin"):
     else:
         platform_dir = "macos_arm"
 
-path_to_ffmpeg_binary = str(HERE / "bin" / platform_dir / "ffmpeg")
+path_to_ffmpeg_binary = str(HERE / ".." / "bin" / platform_dir / "ffmpeg")
 
 def install():
     PyInstaller.__main__.run([
