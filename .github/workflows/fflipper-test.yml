@@ -10,11 +10,11 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # If you wanted to use multiple Python versions, you'd have specify a matrix in the job and
       # reference the matrixe python version here.
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -24,7 +24,7 @@ jobs:
       # manually if/when you want to upgrade Poetry, or if something goes wrong. This could be
       # mildly cleaner by using an environment variable, but I don't really care.
       - name: cache poetry install
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.local
           key: poetry-1.1.12-0
