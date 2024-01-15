@@ -1,9 +1,11 @@
-import sys, re, os, time, subprocess, multiprocessing
+import sys, re, os, time, subprocess, multiprocessing, functools
 from tkinter import *
 from tkinter import filedialog, messagebox, simpledialog, ttk
-from fflipper.clipper import clipper
+from pathlib import Path
 import pyelan.pyelan as pyelan
-import functools
+from fflipper.clipper import clipper
+from fflipper.utils import fetch_resource
+
 
 fp = functools.partial
 
@@ -119,7 +121,6 @@ class MyDialog(simpledialog.Dialog):
         return frame
 
     def ok_pressed(self):
-        # print("ok")
         self.destroy()
 
     def buttonbox(self):
@@ -270,7 +271,8 @@ class fflipper:
         self.saveTo.grid(row=19, column=0, sticky=W)
 
         # about/licnese button
-        # TODO: include source, link to it, license, URLs etc.
+        self.saveTo = Button(optionsArea, text="About", command=self.about)
+        self.saveTo.grid(row=19, column=0, sticky=E)
 
         # clipping button
         self.clip = Button(self.root, text="Begin clipping", command=self.prepAndDo)
@@ -496,8 +498,16 @@ class fflipper:
         file_opt = options = {}
         options["filetypes"] = [("eaf files", ".eaf"), ("all files", ".*")]
         file = filedialog.askopenfilename(**options)
+       
         # clear any clips in progress
         self.clearClips()
+
+        # clear tiers
+        if len(tierSelection.scrollable_frame.children) > 0:
+            # Delete all frames in the progress window
+            [widget.destroy() for widget in tierSelection.scrollable_frame.winfo_children()]
+        self.annosToClip = []
+
         try:
             self.allTiers = pyelan.tierSet(file=file)
         except pyelan.noMediaError as e:
@@ -541,13 +551,20 @@ class fflipper:
 
         # to alter the scroll size of the canvas.
         self.root.update_idletasks()
-        # canvasTier.config(scrollregion=canvasTier.bbox(ALL))
+
 
     def clearClips(self):
         if len(self.annosToClip) > 0:
             # Delete all frames in the progress window
             [widget.destroy() for widget in self.annosToClip[0]["progress"].master.winfo_children()]
         self.annosToClip = []
+
+
+    def about(self):
+        file = fetch_resource(Path(__file__)) / "about"
+        details = open(file).read()
+        MyDialog(title="About", contents = details, parent=self.root)
+
 
 if __name__ == "__main__" :
     app = fflipper()

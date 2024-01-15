@@ -2,7 +2,7 @@ import sys, re, os, time, subprocess, errno
 from pathlib import Path
 from datetime import datetime  # both datetime imports needed?
 from datetime import timedelta  # both datetime imports needed?
-
+from fflipper.utils import fetch_resource
 
 # from http://stackoverflow.com/questions/273192
 def make_sure_path_exists(path):
@@ -11,15 +11,6 @@ def make_sure_path_exists(path):
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
-
-# So that resources work inside pyinstalled and dev
-def fetch_resource(resource_path):
-    try:  # running as *.exe; fetch resource from temp directory
-        base_path = Path(sys._MEIPASS)
-    except AttributeError:  # running as script; return one up
-        return resource_path.resolve().parents[0]
-    else:  # return temp resource path, two up
-        return base_path.joinpath(resource_path.resolve().parents[1])
 
 class clipper:
     """Generates the actually ffmpeg clipping"""
