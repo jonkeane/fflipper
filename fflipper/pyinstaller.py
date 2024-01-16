@@ -18,7 +18,7 @@ path_to_ffmpeg_binary = str(HERE / ".." / "bin" / platform_dir / "ffmpeg")
 def install():
     PyInstaller.__main__.run([
         path_to_main,
-        '--onefile',
+        '--onedir',
         '--windowed',
         f'--add-data={path_to_ffmpeg_binary}:bin',
         '--icon=logo/fflipper.icns',
