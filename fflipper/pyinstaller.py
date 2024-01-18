@@ -1,7 +1,7 @@
 import PyInstaller.__main__
 from PyInstaller.utils.hooks import collect_data_files
 from pathlib import Path
-import platform
+import os, platform
 
 HERE = Path(__file__).parent.absolute()
 path_to_main = str(HERE / "fflipper.py")
@@ -14,6 +14,8 @@ if (sys == "darwin"):
         platform_dir = "macos_arm"
 
 path_to_ffmpeg_binary = str(HERE / ".." / "bin" / platform_dir / "ffmpeg")
+entitlements_file = str(HERE / ".." / "dev" / "entitlements.plist")
+codesign_id = os.environ['MACOS_CODESIGN_DEV_ID']
 
 def install():
     PyInstaller.__main__.run([
@@ -24,4 +26,6 @@ def install():
         '--icon=logo/fflipper.icns',
         '--name', 'fflipper',
         '--hidden-import=_tkinter',
+        f'--codesign-identity={codesign_id}',
+        f'--osx-entitlements-file={entitlements_file}'
     ])

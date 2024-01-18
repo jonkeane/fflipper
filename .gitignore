@@ -1,4 +1,6 @@
 **pycodesign.ini
+!dev/pycodesign.ini
+package
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

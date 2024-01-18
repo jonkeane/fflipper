@@ -498,7 +498,7 @@ class fflipper:
         file_opt = options = {}
         options["filetypes"] = [("eaf files", ".eaf"), ("all files", ".*")]
         file = filedialog.askopenfilename(**options)
-       
+
         # clear any clips in progress
         self.clearClips()
 
@@ -508,16 +508,21 @@ class fflipper:
             [widget.destroy() for widget in tierSelection.scrollable_frame.winfo_children()]
         self.annosToClip = []
 
-        try:
-            self.allTiers = pyelan.tierSet(file=file)
-        except pyelan.noMediaError as e:
-            # error if there are no tiers selected.
+        # load the tiers
+        self.allTiers = pyelan.tierSet(file=file)
+
+        # check if the media we would use is found
+        if os.path.isfile(self.allTiers.media[0]) == False:
             messagebox.showwarning(
                 "No media found",
-                "Could not find the media attached to the ELAN file (path:"
-                + e.filename
+                "Could not find the media attached to the ELAN file ("
+                + file
                 + "). Please open the ELAN file, find the media, and then save it again.",
             )
+
+            # clean up
+            self.allTiers = []
+            return(None)
 
         self.msg = Label(
             tierSelection.scrollable_frame,
