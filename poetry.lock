@@ -119,13 +119,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pyelan"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pyelan-0.1.1-py3-none-any.whl", hash = "sha256:b8a0df7ab5a7b99e2122281689f8982df605a4ac6bef8270ebfe1c90433e5a73"},
-    {file = "pyelan-0.1.1.tar.gz", hash = "sha256:17fdeb2c4b67916f79f9c4d91c69f617968ac3ea6d8dd088b04622df729437cd"},
+    {file = "pyelan-0.1.2-py3-none-any.whl", hash = "sha256:c21657a65e3b8331e896686c0a251d286b5dfade2e0820df178e08e279a46a11"},
+    {file = "pyelan-0.1.2.tar.gz", hash = "sha256:50f53731865df24823bfcc937247ae4746d0c91bbe271619184a6b7bc1f186cc"},
 ]
 
 [package.dependencies]
