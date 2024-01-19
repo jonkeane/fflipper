@@ -40,3 +40,7 @@ installation_path = /Applications/
 entitlements = ./entitlements.plist
 version = 0.1.0
 ```
+
+## Debugging
+
+Can't find tkinter? Try installing `brew install python-tk@3.12`

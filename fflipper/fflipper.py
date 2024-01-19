@@ -424,12 +424,7 @@ class fflipper:
                 # process polling only if there is a process to poll
                 singleAnno["process"].poll()
                 if singleAnno["process"].returncode is None:
-                    frameReg = re.compile("^frame=\s+(\d+).*")
-
-                    outPut = singleAnno["process"].stdout.readline()
-                    frames = frameReg.match(outPut)
-                    if frames:
-                        print("frames:", frames.group(1))
+                    continue
                 elif singleAnno["process"].returncode == 0:
                     singleAnno["progress"].children["!progressbar"].stop()
                     singleAnno["progress"].children["!progressbar"]["value"] = 100
