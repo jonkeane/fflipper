@@ -6,33 +6,8 @@ A video clipper that takes ELAN files as it's input and generates clips based on
 
 ## Installation
 
-To install on OS X (tested and works with Yosemite:)
+fflipper installs as a standard macOS application. There are two different versions for macs with apple M-based chips (e.g. M1, M2, M3) and older macs with x86 processors.
 
-### Install [Homebrew](http://brew.sh/) with the command
+[Download for M-based macs](https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper.pkg)
 
-`ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-
-If this doesn't work, consult the Homebrew documentation.
-
-### Install python and tk from brew
-`brew install python --with-tcl-tk`
-
-### Install ElementTree for python:
-`easy_install elementtree` should work, if not try `sudo easy_install elementtree`
-
-### Download fflipper, [pyelan](https://github.com/jonkeane/pyelan), and [clipper](https://github.com/jonkeane/clipper).
-Move these into the fflipper folder, and make sure that each folder is named just `pyelan` and `clipper` respectively (ie remove the `-master`, if you downloaded them from GitHub as archives.)
-
-### Run
-Use the command `python /path/to/fflipper/fflipper.py` in the terminal to run ffliper, remember to change the /path/to part to the location of fflipper on your machine.
-
-Some development of this project was supported by a grant from the national sicence foundation: NFS BCS 1251807
-
-
-## Development
-
-The project makes use of poetry and pyinstaller to manage dependencies + bundle everything needed together.
-
-To create a release:
-
-Which will run `poetry run build` which calls pyinstaller.py
+[Download for x86 macs](https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_x86.pkg) (only needed for older macs)

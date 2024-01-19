@@ -1,4 +1,14 @@
-# macOS apps need certificates
+# Basics
+
+The project makes use of poetry and pyinstaller to manage dependencies + bundle everything needed together.
+
+To create a release:
+
+Which will run `poetry run build` which calls pyinstaller.py
+
+`poetry shell` starts a poetry shell (you can switch python version swith `poetry env use python3...`)
+
+# Package signing for macOS
 
 Following: https://github.com/txoof/codesign (which is also included under dev/pycodesign.py)
 
