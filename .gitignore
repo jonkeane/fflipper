@@ -2,7 +2,7 @@
 !dev/pycodesign.ini
 package
 .privateenv
-.privateenv_rosh
+.privateenv_*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
