@@ -18,6 +18,11 @@ fflipper installs as a standard macOS application. There are two different versi
 
 If you try one and get an error, try the other.
 
+
+<details>
+
+<summary>Additional details, advanced topics, development</summary>
+
 ## Developer installation
 
 fflipper uses the [poetry](https://python-poetry.org) for installation and dependency management. One you [install poetry](https://python-poetry.org/docs/#installation), you should be able to do the following (all from inside of the fflipper directory):
@@ -34,3 +39,5 @@ Only use this method if you are having issues installing using the section above
 
 * Backup, alternative for M-based macs: `https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_backup_alternative.zip`
 * Backup, alternative for x86 macs: `https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_x86_backup_alternative.zip` (only needed for older macs)
+
+</details>
