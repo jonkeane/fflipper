@@ -37,7 +37,7 @@ python run_app.py
 
 Only use this method if you are having issues installing using the section above. This might not work depending on your system.
 
-* Backup, alternative for M-based macs: `https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_backup_alternative.zip`
-* Backup, alternative for x86 macs: `https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_x86_backup_alternative.zip` (only needed for older macs)
+* Backup, alternative for M-based macs: https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_backup_alternative.zip
+* Backup, alternative for x86 macs: https://github.com/jonkeane/fflipper/releases/download/0.1.0-rc/fflipper_x86_backup_alternative.zip (only needed for older macs)
 
 </details>
