@@ -2,7 +2,7 @@
     <p align="right">
         <img align="right" width="256" height="256" src="./logo/fflipper.png", alt="fflipper logo" />
     </p>
-<h1>fflipper<h2>
+<h1>fflipper</h1>
 <br />
 A video clipper that takes ELAN files as it's input and generates clips based on the annotations in a selected tier.
 </div>
