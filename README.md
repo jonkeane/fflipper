@@ -1,7 +1,7 @@
 fflipper
 ================================
 
-<img align="right" width="512" height="512" src="https://github.com/jonkeane/fflipper/raw/main/logo/fflipper.png", alt="fflipper logo">
+<img align="right" width="512" height="512" src="./logo/fflipper.png", alt="fflipper logo" />
 
 
 
