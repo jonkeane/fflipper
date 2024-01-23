@@ -1,7 +1,8 @@
 fflipper
 ================================
 
-![fflipper logo](logo/fflipper.png)
+<img align="right" width="512" height="512" src="https://github.com/jonkeane/fflipper/raw/main/logo/fflipper.png", alt="fflipper logo">
+
 
 
 A video clipper that takes ELAN files as it's input and generates clips based on the annotations in a selected tier.
