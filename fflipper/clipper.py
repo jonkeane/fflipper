@@ -1,4 +1,4 @@
-import sys, re, os, time, subprocess, errno
+import sys, re, os, time, subprocess, errno, platform
 from pathlib import Path
 from datetime import datetime  # both datetime imports needed?
 from datetime import timedelta  # both datetime imports needed?
@@ -63,8 +63,20 @@ class clipper:
         # deinterlace+crop '-vf "[in] yadif=1 [o1]; [o1] crop=1464:825:324:251 [out]"'
         # deinterlace '-vf "[in] yadif=1 [out]"'
         dur = self.tend - self.tstart
-        
+
         path_to_ffmpeg = fetch_resource(Path(__file__)) / "bin" / "ffmpeg"
+
+        # if we are running outside of a bundle, we need to add one more layer
+        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+            system = platform.system().lower()
+            if (system == "darwin"):
+                plat = platform.platform()
+                if ("x86" in plat):
+                    platform_dir = "macos_x86"
+                else:
+                    platform_dir = "macos_arm"
+            path_to_ffmpeg = Path(str(path_to_ffmpeg).replace("bin", f"bin/{platform_dir}"))
+
         cmd = [path_to_ffmpeg]
 
         opts = []
