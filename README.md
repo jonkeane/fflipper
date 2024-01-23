@@ -4,11 +4,10 @@ fflipper
 
 
 <p>
-  A video clipper that takes ELAN files as it's input and generates clips based on the annotations in a selected tier.
-  <p align="right">
-    <img align="right" width="512" height="512" src="./logo/fflipper.png", alt="fflipper logo" />
-
-  </p>
+    <p align="right">
+        <img align="right" width="256" height="256" src="./logo/fflipper.png", alt="fflipper logo" />
+    </p>
+    A video clipper that takes ELAN files as it's input and generates clips based on the annotations in a selected tier.
 </p>
 
 
