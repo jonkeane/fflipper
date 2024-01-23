@@ -1,7 +1,7 @@
 fflipper
 ================================
 
-[logo]: https://github.com/jonkeane/fflipper/raw/main/logo/fflipper.png "fflipper logo"
+![fflipper logo](logo/fflipper.png)
 
 
 A video clipper that takes ELAN files as it's input and generates clips based on the annotations in a selected tier.
