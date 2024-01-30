@@ -399,8 +399,10 @@ class fflipper:
     def doClipping(self):
         # do the actual clipping
         # establish the number of cores available
-        numCores = multiprocessing.cpu_count()
-        freeProcs = numCores
+        # we divide in half the number of cores because ffmpeg itself is multi-core aware
+        numCores = multiprocessing.cpu_count() / 4
+        # But we don't want this to be less than one
+        numCores = max(numCores, 1)
         print("Starting process monitoring.")
         nComplete = 0
         nClips = len(self.annosToClip)
@@ -409,14 +411,15 @@ class fflipper:
         while not allComplete:
             for singleAnno in self.annosToClip:
                 if singleAnno["process"] is None:
-                    if freeProcs > 0:
+                    # count all the active processes (those that have a process and have no return code)
+                    active_processes = sum([singAnn["process"] is not None and singAnn["process"].returncode is None for singAnn in self.annosToClip])
+                    if active_processes < numCores:
                         # We have free processors, start starting jobs
                         singleAnno["process"] = singleAnno["clipper"].clip()
                         singleAnno["progress"].children["!progressbar"].config(
                             mode="determinate"
                         )
                         self.root.update()
-                        freeProcs -= 1
                     else:
                         # We continue if there are no freeProcs cause there will be no process to poll
                         continue
@@ -431,10 +434,8 @@ class fflipper:
                     self.root.update()
 
                     singleAnno["done"] = True
-                    freeProcs += 1
                 else:
                     singleAnno["done"] = True
-                    freeProcs += 1
 
                     error_out = singleAnno["process"].stdout.read()
                     error_button = Button(
